@@ -1,0 +1,21 @@
+# Entorno virtual local
+.venv/
+
+# Caché de Python
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Secretos (se pasan via env_file en docker-compose, nunca baked en imagen)
+.env
+
+# Datos voluminosos montados como volúmenes en docker-compose
+models/
+xai_maps/
+
+# Control de versiones y herramientas
+.git/
+.gitignore
+*.md

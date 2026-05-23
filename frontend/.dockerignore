@@ -1,0 +1,13 @@
+# Dependencias (se reinstalan con npm ci en el Dockerfile)
+node_modules/
+
+# Build anterior
+dist/
+
+# Control de versiones
+.git/
+.gitignore
+*.md
+
+# Config local
+.env*

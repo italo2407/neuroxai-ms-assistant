@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>NeuroXAI MS Report — {{ patient_label }}</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 11px; color: #1a1a2e; background: #fff; padding: 24px; }
+    .header { display: flex; align-items: center; justify-content: space-between; border-bottom: 3px solid #2d6cdf; padding-bottom: 14px; margin-bottom: 24px; }
+    .header h1 { font-size: 22px; color: #2d6cdf; font-weight: 700; }
+    .header .meta { text-align: right; font-size: 10px; color: #666; line-height: 1.6; }
+    .section { margin-bottom: 28px; }
+    .section-title { font-size: 14px; font-weight: 700; color: #2d6cdf; border-left: 4px solid #2d6cdf; padding-left: 8px; margin-bottom: 14px; }
+    .image-grid { display: flex; gap: 14px; flex-wrap: wrap; }
+    .image-card { border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: #f8f9fa; }
+    .image-card img { width: 210px; height: 210px; object-fit: contain; display: block; }
+    .image-card .caption { text-align: center; padding: 7px 4px; font-size: 10px; font-weight: 600; color: #333; background: #f0f0f0; }
+    .metrics-table { width: 100%; border-collapse: collapse; }
+    .metrics-table th { background: #2d6cdf; color: white; padding: 8px 12px; text-align: left; font-size: 11px; }
+    .metrics-table td { padding: 7px 12px; border-bottom: 1px solid #e0e0e0; font-size: 11px; }
+    .metrics-table tr:nth-child(even) td { background: #f8f9fa; }
+    .metric-val { font-weight: 700; color: #2d6cdf; }
+    .metric-good { color: #28a745; }
+    .metric-moderate { color: #e6a817; }
+    .metric-poor { color: #dc3545; }
+    .xai-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+    .xai-card { border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: #111; }
+    .xai-card img { width: 200px; height: 200px; object-fit: contain; display: block; }
+    .xai-card .caption { text-align: center; padding: 6px; font-size: 10px; font-weight: 600; color: #eee; background: #222; }
+    .clinical-box { background: #f0f7ff; border: 1px solid #b8d4f8; border-radius: 8px; padding: 16px; font-size: 11px; line-height: 1.8; color: #1a2a4a; }
+    .footer { border-top: 1px solid #e0e0e0; padding-top: 12px; font-size: 9px; color: #999; display: flex; justify-content: space-between; margin-top: 8px; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; }
+    .badge-blue { background: #dbeafe; color: #1d4ed8; }
+    .concepts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .concept-item { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 6px; padding: 6px 10px; }
+    .concept-label { font-size: 9px; color: #666; text-transform: capitalize; }
+    .concept-value { font-size: 11px; font-weight: 700; color: #2d6cdf; }
+    @media print {
+      body { padding: 10px; }
+      .section { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Encabezado -->
+  <div class="header">
+    <div>
+      <h1>NeuroXAI MS Assistant</h1>
+      <div style="font-size:11px; color:#555; margin-top:4px;">Informe de Análisis de Segmentación de Lesiones EM</div>
+    </div>
+    <div class="meta">
+      <div><strong>{{ patient_label }}</strong></div>
+      <div>{{ generated_at }}</div>
+      <div>Sesión: {{ session_id[:8] }}…</div>
+      <div class="badge badge-blue">{{ model_info }}</div>
+    </div>
+  </div>
+
+  <!-- Sección 1: Imágenes MRI -->
+  <div class="section">
+    <div class="section-title">1. Imágenes MRI</div>
+    <div class="image-grid">
+      {% if original_b64 %}
+      <div class="image-card">
+        <img src="data:image/png;base64,{{ original_b64 }}" alt="MRI Original">
+        <div class="caption">MRI Original</div>
+      </div>
+      {% endif %}
+      {% if prediction_b64 %}
+      <div class="image-card">
+        <img src="data:image/png;base64,{{ prediction_b64 }}" alt="Máscara Predicha">
+        <div class="caption">Máscara Predicha</div>
+      </div>
+      {% endif %}
+      {% if overlay_b64 %}
+      <div class="image-card">
+        <img src="data:image/png;base64,{{ overlay_b64 }}" alt="Overlay Predicción">
+        <div class="caption">Predicción sobre MRI</div>
+      </div>
+      {% endif %}
+      {% if gt_b64 %}
+      <div class="image-card">
+        <img src="data:image/png;base64,{{ gt_b64 }}" alt="Ground Truth">
+        <div class="caption">Ground Truth</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Sección 2: Métricas -->
+  {% if metrics %}
+  <div class="section">
+    <div class="section-title">2. Métricas de Evaluación</div>
+    <table class="metrics-table">
+      <thead>
+        <tr>
+          <th>Métrica</th>
+          <th>Valor</th>
+          <th>Interpretación</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>DICE Score</td>
+          <td class="metric-val {% if metrics.dice > 0.7 %}metric-good{% elif metrics.dice > 0.4 %}metric-moderate{% else %}metric-poor{% endif %}">
+            {{ "%.4f"|format(metrics.dice) }}
+          </td>
+          <td>{% if metrics.dice > 0.7 %}Excelente{% elif metrics.dice > 0.4 %}Moderado{% else %}Bajo{% endif %}</td>
+        </tr>
+        <tr>
+          <td>IoU (Jaccard)</td>
+          <td class="metric-val">{{ "%.4f"|format(metrics.iou) }}</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Precisión</td>
+          <td class="metric-val">{{ "%.4f"|format(metrics.precision) }}</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Recall / Sensibilidad</td>
+          <td class="metric-val">{{ "%.4f"|format(metrics.recall) }}</td>
+          <td>—</td>
+        </tr>
+        {% if metrics.gt_lesion_pixels is defined %}
+        <tr>
+          <td>Píxeles lesión GT</td>
+          <td class="metric-val">{{ metrics.gt_lesion_pixels }} ({{ "%.2f"|format(metrics.gt_lesion_pct) }}%)</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td>Píxeles lesión Pred.</td>
+          <td class="metric-val">{{ metrics.pred_lesion_pixels }} ({{ "%.2f"|format(metrics.pred_lesion_pct) }}%)</td>
+          <td>—</td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- Sección 3: Mapas XAI -->
+  {% if include_xai_maps and xai_maps %}
+  <div class="section">
+    <div class="section-title">3. Mapas de Explicabilidad (XAI)</div>
+    <div class="xai-grid">
+      {% for method, map_data in xai_maps.items() %}
+      {% if not map_data.timed_out and map_data.heatmap_b64 %}
+      <div class="xai-card">
+        <img src="data:image/png;base64,{{ map_data.heatmap_b64 }}" alt="{{ method }}">
+        <div class="caption">{{ method | replace('_', ' ') | title }}</div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Sección 4: Análisis por región -->
+  {% if concepts %}
+  <div class="section">
+    <div class="section-title">4. Análisis por Región Anatómica</div>
+    <div class="concepts-grid">
+      {% for key, val in concepts.items() %}
+      <div class="concept-item">
+        <div class="concept-label">{{ key | replace('_', ' ') }}</div>
+        <div class="concept-value">{{ val }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Sección 5: Interpretación clínica -->
+  {% if include_vlg_cbm and clinical_explanation %}
+  <div class="section">
+    <div class="section-title">5. Interpretación Clínica (NeuroXAI + Gemini)</div>
+    <div class="clinical-box">{{ clinical_explanation }}</div>
+  </div>
+  {% endif %}
+
+  <!-- Pie de página -->
+  <div class="footer">
+    <div>NeuroXAI MS Assistant — TFM · Universidad de Málaga</div>
+    <div>Modelo: BasicUNetPlusPlus (MONAI) · Ensemble 5-fold · XAI: Grad-CAM, IG, SHAP, LIME, SmoothGrad²</div>
+    <div>{{ generated_at }}</div>
+  </div>
+
+</body>
+</html>
