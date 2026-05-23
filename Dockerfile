@@ -42,8 +42,9 @@ COPY backend/app/ app/
 # Build del frontend → dentro del backend como archivos estáticos
 COPY --from=frontend-builder /frontend/dist/ static/
 
-# Directorios de datos (montados como volúmenes en HF Spaces o copiados con LFS)
-RUN mkdir -p models xai_maps
+# Archivos LFS: modelos y mapas XAI
+COPY backend/models/ models/
+COPY backend/xai_maps/ xai_maps/
 
 # HF Spaces expone el puerto 7860 por defecto
 EXPOSE 7860
