@@ -6,7 +6,7 @@
 #   /  (raíz)
 #   ├── backend/          ← app FastAPI
 #   ├── frontend/         ← fuentes React (se compila aquí)
-#   └── Dockerfile        ← este archivo (renombrar)
+#   └── Dockerfile       
 # ──────────────────────────────────────────────────────────────────────────
 
 # ── Stage 1: Build Vite ────────────────────────────────────────────────────
@@ -17,21 +17,18 @@ COPY frontend/package*.json ./
 RUN npm ci --prefer-offline
 COPY frontend/ .
 RUN npm run build
-# Resultado en /frontend/dist
 
 # ── Stage 2: Backend Python ────────────────────────────────────────────────
 FROM python:3.12-slim
 
 WORKDIR /app
 
-# Sistema (WeasyPrint + Pillow)
 RUN apt-get update && apt-get install -y --no-install-recommends \
         libpango-1.0-0 libpangoft2-1.0-0 libcairo2 \
         libgdk-pixbuf-2.0-0 libffi8 shared-mime-info \
         fonts-liberation fonts-freefont-ttf curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Python deps: torch CPU primero (ahorra ~1 GB)
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir \
         "torch>=2.2.0" "torchvision>=0.17.0" \

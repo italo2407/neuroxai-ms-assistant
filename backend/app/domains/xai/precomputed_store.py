@@ -18,8 +18,6 @@ NOTEBOOK_TO_API: dict[str, str] = {
 class PrecomputedXAIStore:
     """
     Loads global XAI maps (average across the test set) from the .npz checkpoints
-    produced by the notebook.  Each .npz file must contain at least a 'global_map'
-    key (float32 H×W array).
     """
 
     def __init__(self) -> None:

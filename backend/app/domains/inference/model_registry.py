@@ -91,7 +91,6 @@ class ModelRegistry:
             logger.info(f"ModelRegistry ready: {len(loaded)} folds loaded")
 
     def _build_model(self) -> _SingleOutputModel:
-        """Construye _SingleOutputModel(BasicUNetPlusPlus(...)) igual que en el entrenamiento."""
         base = BasicUNetPlusPlus(**_UNETPLUSPLUS_KWARGS)
         return _SingleOutputModel(base)
 

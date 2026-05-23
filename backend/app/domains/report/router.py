@@ -28,6 +28,5 @@ async def generate_report(request: ReportRequest):
     return Response(
         content=html_bytes,
         media_type="text/html; charset=utf-8",
-        # inline → el navegador lo renderiza en la pestaña en vez de descargarlo
         headers={"Content-Disposition": "inline"},
     )

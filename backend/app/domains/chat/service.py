@@ -139,9 +139,7 @@ Genera un párrafo clínico (4-6 frases) en español evaluando:
 
     def _invalid_key_response(self) -> str:
         return (
-            "⚠️ La clave API de Gemini configurada no es válida. "
-            "Obtén una clave gratuita en https://aistudio.google.com/apikey, "
-            "añádela como GEMINI_API_KEY=tu_clave en backend/.env y reinicia el servidor."
+            "La clave API de Gemini configurada no es válida.   "
         )
 
     def _offline_vlg_cbm(self, session: SessionData) -> str:
