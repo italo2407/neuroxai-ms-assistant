@@ -1,3 +1,15 @@
+---
+title: Neuroxai Ms Assistant
+emoji: ⚡
+colorFrom: red
+colorTo: indigo
+sdk: docker
+pinned: false
+license: other
+short_description: Aplicación MS
+---
+
+
 # NeuroXAI MS Assistant
 
 Aplicación web clínica para la **segmentación automática de lesiones de Esclerosis Múltiple** en imágenes de resonancia magnética (RM), con explicabilidad de la IA (XAI) e interfaz interactiva para entornos hospitalarios.
@@ -53,7 +65,7 @@ neuroxai-assistant/
 git clone https://github.com/italo2407/neuroxai-ms-assistant.git
 cd neuroxai-ms-assistant
 
-# 2. Descargar modelos via LFS (tener instalado git lfs)
+# 2. Descargar modelos via LFS (instalado previamente)
 git lfs pull
 
 #3. Configurar variables de entorno
