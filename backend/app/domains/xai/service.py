@@ -95,65 +95,8 @@ class XAIService:
 
         session.xai_results = {k: v for k, v in raw_maps.items() if v is not None}
 
-        concepts = self._extract_concepts(session)
-        session.vlg_cbm_concepts = concepts
-
         elapsed_ms = (time.time() - t0) * 1000
-        return {"raw_maps": raw_maps, "elapsed_ms": elapsed_ms, "concepts": concepts}
-
-    def _extract_concepts(self, session: SessionData) -> dict:
-        image_np = session.image_np
-        if image_np is None:
-            return {}
-
-        gt = session.gt_mask_np
-        pred = session.predicted_mask_np
-
-        priority = ["gradcam", "integrated_gradients", "smoothgrad2", "shap", "lime"]
-        attr_map = None
-        for key in priority:
-            if key in session.xai_results and session.xai_results[key] is not None:
-                attr_map = session.xai_results[key]
-                break
-
-        if attr_map is None:
-            return {}
-
-        h, w = attr_map.shape
-        total_px = h * w
-
-        concepts = {
-            "attribution_mean": round(float(attr_map.mean()), 4),
-            "attribution_max": round(float(attr_map.max()), 4),
-            "high_activation_pct": round(100 * float((attr_map > 0.5).sum()) / total_px, 2),
-            "brain_tissue_pct": round(100 * float((image_np > 0.05).sum()) / image_np.size, 1),
-        }
-
-        if pred is not None:
-            concepts["pred_lesion_pixels"] = int(pred.sum())
-            concepts["pred_lesion_pct"] = round(100 * float(pred.sum()) / total_px, 3)
-
-        if gt is not None:
-            concepts["gt_lesion_pixels"] = int(gt.sum())
-            concepts["gt_lesion_pct"] = round(100 * float(gt.sum()) / total_px, 3)
-
-        regions = {
-            "periventricular": ((0.3, 0.7), (0.3, 0.7)),
-            "subcortical": ((0.2, 0.8), (0.2, 0.8)),
-            "cortical_juxtacortical": ((0.0, 0.2), (0.0, 1.0)),
-            "infratentorial": ((0.7, 1.0), (0.2, 0.8)),
-        }
-        for region, (yr, xr) in regions.items():
-            y0, y1 = int(yr[0] * h), int(yr[1] * h)
-            x0, x1 = int(xr[0] * w), int(xr[1] * w)
-            reg_attr = attr_map[y0:y1, x0:x1]
-            concepts[f"{region}_activation_mean"] = round(float(reg_attr.mean()), 4)
-            if pred is not None:
-                concepts[f"{region}_pred_lesion_px"] = int(pred[y0:y1, x0:x1].sum())
-            if gt is not None:
-                concepts[f"{region}_gt_lesion_px"] = int(gt[y0:y1, x0:x1].sum())
-
-        return concepts
+        return {"raw_maps": raw_maps, "elapsed_ms": elapsed_ms}
 
 
 xai_service = XAIService()

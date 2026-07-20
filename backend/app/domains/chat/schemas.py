@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import Optional
 
 
 class ChatMessage(BaseModel):
@@ -18,12 +17,11 @@ class ChatResponse(BaseModel):
     role: str = "model"
 
 
-class VLGCBMRequest(BaseModel):
+class ClinicalInterpretationRequest(BaseModel):
     session_id: str
-    xai_method: str = "ensemble_mean"
+    notes: str = ""
 
 
-class VLGCBMResponse(BaseModel):
-    concepts: dict
-    clinical_explanation: str
+class ClinicalInterpretationResponse(BaseModel):
+    interpretation: str
     model_used: str

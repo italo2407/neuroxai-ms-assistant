@@ -18,8 +18,8 @@ class SessionData:
     soft_logits_np: Optional[np.ndarray] = None
     fold_masks: list = field(default_factory=list)
     xai_results: dict = field(default_factory=dict)    # method -> float32 map (H,W)
-    vlg_cbm_concepts: dict = field(default_factory=dict)
     metrics: dict = field(default_factory=dict)
+    clinical_interpretation: str = ""
     created_at: float = field(default_factory=time.time)
     updated_at: float = field(default_factory=time.time)
 

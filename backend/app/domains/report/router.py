@@ -19,7 +19,7 @@ async def generate_report(request: ReportRequest):
             report_service.generate,
             session,
             request.include_xai_maps,
-            request.include_vlg_cbm,
+            request.include_clinical_interpretation,
             request.patient_label or "Paciente",
         )
     except Exception as e:

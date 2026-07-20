@@ -1,10 +1,12 @@
 import asyncio
 from fastapi import APIRouter, HTTPException
 from app.domains.chat.schemas import (
-    ChatRequest, ChatResponse, VLGCBMRequest, VLGCBMResponse
+    ChatRequest, ChatResponse,
+    ClinicalInterpretationRequest, ClinicalInterpretationResponse,
 )
 from app.domains.chat.service import chat_service
 from app.core.session_store import session_store
+from app.config import settings
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -23,19 +25,19 @@ async def send_message(request: ChatRequest):
     return ChatResponse(reply=reply, role="model")
 
 
-@router.post("/vlg-cbm", response_model=VLGCBMResponse)
-async def vlg_cbm_explanation(request: VLGCBMRequest):
+@router.post("/clinical-interpretation", response_model=ClinicalInterpretationResponse)
+async def clinical_interpretation(request: ClinicalInterpretationRequest):
     session = session_store.get(request.session_id)
     if session is None:
         raise HTTPException(status_code=404, detail="Session not found")
 
-    explanation = await asyncio.to_thread(
-        chat_service.generate_vlg_cbm_explanation, session
+    interpretation = await asyncio.to_thread(
+        chat_service.generate_clinical_interpretation, session, request.notes
     )
+    session.clinical_interpretation = interpretation
+    session_store.update(session)
 
-    from app.config import settings
-    return VLGCBMResponse(
-        concepts=session.vlg_cbm_concepts,
-        clinical_explanation=explanation,
+    return ClinicalInterpretationResponse(
+        interpretation=interpretation,
         model_used=settings.gemini_model,
     )

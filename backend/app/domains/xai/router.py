@@ -80,7 +80,6 @@ async def compute_xai(request: XAIRequest):
         session_id=request.session_id,
         maps=maps,
         compute_time_ms=result["elapsed_ms"],
-        vlg_cbm_concepts=result["concepts"],
         methods_available=[m for m, v in raw_maps.items() if v is not None],
     )
 
@@ -161,14 +160,11 @@ async def show_precomputed_xai(request: PrecomputedXAIRequest):
         method: precomputed_store.get_map(method)
         for method in maps.keys()
     }
-    concepts = xai_service._extract_concepts(session)
-    session.vlg_cbm_concepts = concepts
     session_store.update(session)
 
     return XAIResponse(
         session_id=request.session_id,
         maps=maps,
         compute_time_ms=elapsed_ms,
-        vlg_cbm_concepts=concepts,
         methods_available=list(maps.keys()),
     )

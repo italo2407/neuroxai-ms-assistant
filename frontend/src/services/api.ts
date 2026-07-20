@@ -1,7 +1,7 @@
 import axios from 'axios'
 import type {
   InferenceResponse, MetricsResponse, XAIResponse,
-  ChatMessage, ChatResponse, VLGCBMResponse, ReportRequest,
+  ChatMessage, ChatResponse, ClinicalInterpretationResponse, ReportRequest,
   PrecomputedStatusResponse,
 } from '@/types/api.types'
 
@@ -81,10 +81,13 @@ export const chatApi = {
     })
     return data
   },
-  vlgCbm: async (sessionId: string, xaiMethod: string = 'ensemble_mean'): Promise<VLGCBMResponse> => {
-    const { data } = await api.post<VLGCBMResponse>('/chat/vlg-cbm', {
+  generateClinicalInterpretation: async (
+    sessionId: string,
+    notes: string = ''
+  ): Promise<ClinicalInterpretationResponse> => {
+    const { data } = await api.post<ClinicalInterpretationResponse>('/chat/clinical-interpretation', {
       session_id: sessionId,
-      xai_method: xaiMethod,
+      notes,
     })
     return data
   },
