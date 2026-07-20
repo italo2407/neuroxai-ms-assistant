@@ -3,7 +3,6 @@ import io
 import numpy as np
 from PIL import Image, ImageFilter
 import matplotlib
-import matplotlib.cm as cm
 matplotlib.use("Agg")
 
 
@@ -45,7 +44,7 @@ def colorize_heatmap(arr: np.ndarray, cmap_name: str = "hot") -> str:
     arr_norm = arr.copy()
     if arr_norm.max() > arr_norm.min():
         arr_norm = (arr_norm - arr_norm.min()) / (arr_norm.max() - arr_norm.min())
-    cmap = cm.get_cmap(cmap_name)
+    cmap = matplotlib.colormaps[cmap_name]
     rgba = cmap(arr_norm)  # (H, W, 4) float64
     rgba_uint8 = (rgba * 255).astype(np.uint8)
     img = Image.fromarray(rgba_uint8, mode="RGBA")
@@ -131,7 +130,7 @@ def overlay_heatmap_on_image(image_np: np.ndarray, attr_map: np.ndarray,
         arr = (arr - arr.min()) / (arr.max() - arr.min())
 
     mri_rgb = np.stack([image_np] * 3, axis=-1).astype(np.float32)   # [0,1]
-    cmap = cm.get_cmap(cmap_name)
+    cmap = matplotlib.colormaps[cmap_name]
     heatmap_rgb = cmap(arr)[:, :, :3].astype(np.float32)              # [0,1]
 
     weight = (alpha_min + (alpha_max - alpha_min) * arr)[:, :, np.newaxis]
@@ -163,7 +162,7 @@ def overlay_heatmap_with_prediction(
         arr = (arr - arr.min()) / (arr.max() - arr.min())
 
     mri_rgb     = np.stack([image_np] * 3, axis=-1).astype(np.float32)
-    cmap        = cm.get_cmap(cmap_name)
+    cmap        = matplotlib.colormaps[cmap_name]
     heatmap_rgb = cmap(arr)[:, :, :3].astype(np.float32)
     weight      = (alpha_min + (alpha_max - alpha_min) * arr)[:, :, np.newaxis]
     blended     = (1 - weight) * mri_rgb + weight * heatmap_rgb  # [0,1]
