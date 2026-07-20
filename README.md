@@ -53,7 +53,7 @@ neuroxai-assistant/
 git clone https://github.com/italo2407/neuroxai-ms-assistant.git
 cd neuroxai-ms-assistant
 
-# 2. Descargar modelos via LFS
+# 2. Descargar modelos via LFS (tener instalado git lfs)
 git lfs pull
 
 #3. Configurar variables de entorno
