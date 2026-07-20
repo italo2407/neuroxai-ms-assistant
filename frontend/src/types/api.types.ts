@@ -35,7 +35,6 @@ export interface XAIResponse {
   session_id: string
   maps: Record<string, XAIMapResult>
   compute_time_ms: number
-  vlg_cbm_concepts: Record<string, number | string>
   methods_available: string[]
 }
 
@@ -49,9 +48,8 @@ export interface ChatResponse {
   role: string
 }
 
-export interface VLGCBMResponse {
-  concepts: Record<string, number | string>
-  clinical_explanation: string
+export interface ClinicalInterpretationResponse {
+  interpretation: string
   model_used: string
 }
 
@@ -64,7 +62,7 @@ export interface PrecomputedStatusResponse {
 export interface ReportRequest {
   session_id: string
   include_xai_maps: boolean
-  include_vlg_cbm: boolean
+  include_clinical_interpretation: boolean
   patient_label?: string
 }
 

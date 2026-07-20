@@ -7,7 +7,7 @@ export function useReport() {
   const [error, setError] = useState<string | null>(null)
   const { sessionId } = useAnalysisStore()
 
-  const generate = async (options: { include_xai_maps: boolean; include_vlg_cbm: boolean; patient_label?: string }) => {
+  const generate = async (options: { include_xai_maps: boolean; include_clinical_interpretation: boolean; patient_label?: string }) => {
     if (!sessionId) return
     setIsGenerating(true)
     setError(null)

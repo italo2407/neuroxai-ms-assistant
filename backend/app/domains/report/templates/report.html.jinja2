@@ -27,14 +27,10 @@
     .xai-card { border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; background: #111; }
     .xai-card img { width: 200px; height: 200px; object-fit: contain; display: block; }
     .xai-card .caption { text-align: center; padding: 6px; font-size: 10px; font-weight: 600; color: #eee; background: #222; }
-    .clinical-box { background: #f0f7ff; border: 1px solid #b8d4f8; border-radius: 8px; padding: 16px; font-size: 11px; line-height: 1.8; color: #1a2a4a; }
+    .clinical-box { background: #f0f7ff; border: 1px solid #b8d4f8; border-radius: 8px; padding: 16px; font-size: 11px; line-height: 1.8; color: #1a2a4a; white-space: pre-line; }
     .footer { border-top: 1px solid #e0e0e0; padding-top: 12px; font-size: 9px; color: #999; display: flex; justify-content: space-between; margin-top: 8px; }
     .badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 10px; font-weight: 600; }
     .badge-blue { background: #dbeafe; color: #1d4ed8; }
-    .concepts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .concept-item { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 6px; padding: 6px 10px; }
-    .concept-label { font-size: 9px; color: #666; text-transform: capitalize; }
-    .concept-value { font-size: 11px; font-weight: 700; color: #2d6cdf; }
     @media print {
       body { padding: 10px; }
       .section { page-break-inside: avoid; }
@@ -157,26 +153,11 @@
   </div>
   {% endif %}
 
-  <!-- Sección 4: Análisis por región -->
-  {% if concepts %}
+  <!-- Sección 4: Interpretación clínica -->
+  {% if include_clinical_interpretation and clinical_interpretation %}
   <div class="section">
-    <div class="section-title">4. Análisis por Región Anatómica</div>
-    <div class="concepts-grid">
-      {% for key, val in concepts.items() %}
-      <div class="concept-item">
-        <div class="concept-label">{{ key | replace('_', ' ') }}</div>
-        <div class="concept-value">{{ val }}</div>
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-  {% endif %}
-
-  <!-- Sección 5: Interpretación clínica -->
-  {% if include_vlg_cbm and clinical_explanation %}
-  <div class="section">
-    <div class="section-title">5. Interpretación Clínica (NeuroXAI + Gemini)</div>
-    <div class="clinical-box">{{ clinical_explanation }}</div>
+    <div class="section-title">4. Interpretación Clínica (NeuroXAI + Gemini)</div>
+    <div class="clinical-box">{{ clinical_interpretation }}</div>
   </div>
   {% endif %}
 

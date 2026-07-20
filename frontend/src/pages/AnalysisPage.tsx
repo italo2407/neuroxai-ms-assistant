@@ -2,7 +2,7 @@ import { UploadPanel } from "@/components/upload/UploadPanel";
 import { ComparisonViewer } from "@/components/inference/ComparisonViewer";
 import { MetricsPanel } from "@/components/inference/MetricsPanel";
 import { XAIPanel } from "@/components/xai/XAIPanel";
-import { VLGCBMPanel } from "@/components/xai/VLGCBMPanel";
+import { ClinicalInterpretationPanel } from "@/components/xai/ClinicalInterpretationPanel";
 import { ReportPanel } from "@/components/report/ReportPanel";
 import { useAnalysisStore } from "@/store/analysisStore";
 import { Brain, ChevronRight } from "lucide-react";
@@ -13,7 +13,7 @@ const STEPS = [
   { id: "compare", label: "Comparación" },
   { id: "metrics", label: "Métricas" },
   { id: "xai", label: "Mapas XAI" },
-  { id: "vlg", label: "VLG-CBM" },
+  { id: "clinical", label: "Interpretación Clínica" },
   { id: "report", label: "Informe" },
 ];
 
@@ -63,7 +63,6 @@ function EmptyState() {
           "SHAP",
           "LIME",
           "SmoothGrad²",
-          "VLG-CBM",
           "Chat Gemini",
         ].map((f) => (
           <span
@@ -103,7 +102,7 @@ export function AnalysisPage() {
               <ComparisonViewer />
               <MetricsPanel />
               <XAIPanel />
-              <VLGCBMPanel />
+              <ClinicalInterpretationPanel />
             </>
           )}
         </main>

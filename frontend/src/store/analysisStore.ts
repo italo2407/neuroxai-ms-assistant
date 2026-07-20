@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import type {
-  InferenceResponse, MetricsResponse, XAIResponse, ChatMessage, VLGCBMResponse
+  InferenceResponse, MetricsResponse, XAIResponse, ChatMessage, ClinicalInterpretationResponse
 } from '@/types/api.types'
 
 export type AppStage =
@@ -39,8 +39,8 @@ interface AnalysisState {
   chatMessages: ChatMessage[]
   isChatOpen: boolean
 
-  // VLG-CBM
-  vlgCbmResult: VLGCBMResponse | null
+  // Clinical interpretation
+  clinicalInterpretation: ClinicalInterpretationResponse | null
 
   // Actions
   setImageFile: (file: File | null, previewUrl: string | null) => void
@@ -52,7 +52,7 @@ interface AnalysisState {
   setSelectedXAIMethods: (methods: string[]) => void
   addChatMessage: (msg: ChatMessage) => void
   setChatOpen: (open: boolean) => void
-  setVlgCbmResult: (result: VLGCBMResponse) => void
+  setClinicalInterpretation: (result: ClinicalInterpretationResponse) => void
   reset: () => void
 }
 
@@ -73,7 +73,7 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
   selectedXAIMethods: DEFAULT_XAI_METHODS,
   chatMessages: [],
   isChatOpen: false,
-  vlgCbmResult: null,
+  clinicalInterpretation: null,
 
   setImageFile: (file, previewUrl) => set({ imageFile: file, imagePreviewUrl: previewUrl }),
   setGtMaskFile: (file, previewUrl) => set({ gtMaskFile: file, gtPreviewUrl: previewUrl }),
@@ -88,7 +88,7 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
   setSelectedXAIMethods: (methods) => set({ selectedXAIMethods: methods }),
   addChatMessage: (msg) => set((s) => ({ chatMessages: [...s.chatMessages, msg] })),
   setChatOpen: (open) => set({ isChatOpen: open }),
-  setVlgCbmResult: (result) => set({ vlgCbmResult: result }),
+  setClinicalInterpretation: (result) => set({ clinicalInterpretation: result }),
   reset: () => set({
     stage: 'idle',
     imageFile: null,
@@ -100,6 +100,6 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
     metrics: null,
     xaiResult: null,
     chatMessages: [],
-    vlgCbmResult: null,
+    clinicalInterpretation: null,
   }),
 }))

@@ -112,7 +112,7 @@ export function FloatingChat() {
                 <div className="text-center py-8 space-y-3">
                   <Brain className="h-10 w-10 mx-auto text-muted-foreground/30" />
                   <div className="text-sm text-muted-foreground">
-                    Pregúntame sobre la segmentación de lesiones EM, los mapas XAI o la interpretación clínica.
+                    Pregúntame sobre la segmentación de lesiones EM o pídeme que interprete visualmente los mapas XAI.
                   </div>
                   <div className="flex flex-wrap gap-2 justify-center">
                     {[

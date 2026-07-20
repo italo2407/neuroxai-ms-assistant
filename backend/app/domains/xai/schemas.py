@@ -19,7 +19,6 @@ class XAIResponse(BaseModel):
     session_id: str
     maps: dict[str, XAIMapResult]
     compute_time_ms: float
-    vlg_cbm_concepts: dict
     methods_available: list[str]
 
 

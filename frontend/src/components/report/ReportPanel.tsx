@@ -19,7 +19,7 @@ export function ReportPanel() {
   const { generate, isGenerating, error } = useReport();
 
   const [includeXai, setIncludeXai] = useState(true);
-  const [includeVlg, setIncludeVlg] = useState(true);
+  const [includeClinicalInterpretation, setIncludeClinicalInterpretation] = useState(true);
   const [patientLabel, setPatientLabel] = useState("Paciente");
 
   const canGenerate = !!sessionId && stage !== "idle" && !isGenerating;
@@ -27,7 +27,7 @@ export function ReportPanel() {
   const handleGenerate = () => {
     generate({
       include_xai_maps: includeXai,
-      include_vlg_cbm: includeVlg,
+      include_clinical_interpretation: includeClinicalInterpretation,
       patient_label: patientLabel,
     });
   };
@@ -81,11 +81,11 @@ export function ReportPanel() {
             </div>
             <div className="flex items-center gap-2">
               <Checkbox
-                id="include-vlg"
-                checked={includeVlg}
-                onCheckedChange={(c) => setIncludeVlg(c as boolean)}
+                id="include-clinical-interpretation"
+                checked={includeClinicalInterpretation}
+                onCheckedChange={(c) => setIncludeClinicalInterpretation(c as boolean)}
               />
-              <Label htmlFor="include-vlg" className="text-sm cursor-pointer">
+              <Label htmlFor="include-clinical-interpretation" className="text-sm cursor-pointer">
                 Interpretación clínica
               </Label>
             </div>

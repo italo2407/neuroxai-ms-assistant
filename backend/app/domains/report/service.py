@@ -17,25 +17,24 @@ class ReportService:
         self.env = Environment(loader=FileSystemLoader(str(TEMPLATES_DIR)))
 
     def generate(self, session: SessionData, include_xai: bool,
-                 include_vlg_cbm: bool, patient_label: str) -> bytes:
+                 include_clinical_interpretation: bool, patient_label: str) -> bytes:
         """Render the HTML report and return UTF-8 bytes."""
-        ctx = self._build_context(session, include_xai, include_vlg_cbm, patient_label)
+        ctx = self._build_context(session, include_xai, include_clinical_interpretation, patient_label)
         template = self.env.get_template("report.html.jinja2")
         return template.render(**ctx).encode("utf-8")
 
     def _build_context(self, session: SessionData, include_xai: bool,
-                       include_vlg_cbm: bool, patient_label: str) -> dict:
+                       include_clinical_interpretation: bool, patient_label: str) -> dict:
         ctx = {
             "patient_label": patient_label,
             "session_id": session.session_id,
             "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M UTC"),
             "model_info": "BasicUNetPlusPlus · 5-fold KFold",
             "metrics": session.metrics or {},
-            "concepts": session.vlg_cbm_concepts or {},
             "include_xai_maps": include_xai,
-            "include_vlg_cbm": include_vlg_cbm,
             "xai_maps": {},
-            "clinical_explanation": "",
+            "include_clinical_interpretation": include_clinical_interpretation,
+            "clinical_interpretation": session.clinical_interpretation or "",
             "original_b64": None,
             "prediction_b64": None,
             "overlay_b64": None,
@@ -79,11 +78,6 @@ class ReportService:
                 else:
                     hb64 = colorize_heatmap(raw_map, "hot")
                 ctx["xai_maps"][method] = MapData(hb64)
-
-        # VLG-CBM clinical explanation
-        if include_vlg_cbm:
-            from app.domains.chat.service import chat_service
-            ctx["clinical_explanation"] = chat_service.generate_vlg_cbm_explanation(session)
 
         return ctx
 
